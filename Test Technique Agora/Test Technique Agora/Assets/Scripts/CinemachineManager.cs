@@ -10,6 +10,8 @@ public class CinemachineManager : MonoBehaviour
 
     [SerializeField] GameObject _frontHolder;
     [SerializeField] GameObject _topHolder;
+
+    [SerializeField] UIShapes _povButton;
  
     // Update is called once per frame
     void Update()
@@ -17,6 +19,11 @@ public class CinemachineManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.LeftShift))
         {
             _topView = !_topView;
+
+            if(_topView)
+                _povButton.LightSprite();
+            else
+                _povButton.UnlightSprite();
         }
 
         if(_topView)
@@ -25,6 +32,7 @@ public class CinemachineManager : MonoBehaviour
             _topCam.SetActive(true);
             RotateCam(_topHolder);
             StartCoroutine(ResetCamera(_frontHolder));
+            
         }
         else
         {
@@ -32,6 +40,7 @@ public class CinemachineManager : MonoBehaviour
             _topCam.SetActive(false);
             RotateCam(_frontHolder);
             StartCoroutine(ResetCamera(_topHolder));
+            
         }
     }
     void RotateCam(GameObject camToRotate)

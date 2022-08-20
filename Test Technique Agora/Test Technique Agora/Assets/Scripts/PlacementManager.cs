@@ -10,6 +10,7 @@ public class PlacementManager : MonoBehaviour
     [SerializeField] GameObject[] _objectsToPlace;
     [SerializeField] GameObject[] _locationMesh;
     [SerializeField] UIShapes[] _shapeImages;
+    [SerializeField] UIShapes[] _placeModeImage;
     [SerializeField] Canvas _shapeCanvas;
 
     [SerializeField] LayerMask _groundLayer;
@@ -121,10 +122,12 @@ public class PlacementManager : MonoBehaviour
                 _objectToPlace = _objectsToPlace[0];
                 _objectLocation.transform.rotation = Quaternion.identity;
                 _shapeCanvas.enabled = true;
+                ChangeSpriteShapes(0, _placeModeImage);
             }
             else
             {
-                ChangeSpriteShapes(0);
+                ChangeSpriteShapes(0, _shapeImages);
+                ChangeSpriteShapes(1, _placeModeImage);
                 _shapeCanvas.enabled = false;
             }
            
@@ -163,36 +166,36 @@ public class PlacementManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             _objectToPlace = _objectsToPlace[0];
-            ChangeSpriteShapes(0);
+            ChangeSpriteShapes(0, _shapeImages);
             DestroyOldWaypoint(0);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             _objectToPlace = _objectsToPlace[1];
-            ChangeSpriteShapes(1);
+            ChangeSpriteShapes(1, _shapeImages);
             DestroyOldWaypoint(1);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             _objectToPlace = _objectsToPlace[2];
-            ChangeSpriteShapes(2);
+            ChangeSpriteShapes(2, _shapeImages);
             DestroyOldWaypoint(2);
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             _objectToPlace = _objectsToPlace[3];
-            ChangeSpriteShapes(3);
+            ChangeSpriteShapes(3, _shapeImages);
             DestroyOldWaypoint(3);
         }
     }
 
-    void ChangeSpriteShapes(int spriteNumber)
+    void ChangeSpriteShapes(int spriteNumber, UIShapes[] spriteArrayToChange)
     {
-        for (int i = 0; i < _shapeImages.Length ; i++)
+        for (int i = 0; i < spriteArrayToChange.Length ; i++)
         {
-            _shapeImages[i].UnlightSprite();
+            spriteArrayToChange[i].UnlightSprite();
         }
-        _shapeImages[spriteNumber].LightSprite();
+        spriteArrayToChange[spriteNumber].LightSprite();
 
     }
 
