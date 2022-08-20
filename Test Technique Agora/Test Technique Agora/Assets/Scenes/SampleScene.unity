@@ -2015,7 +2015,7 @@ Transform:
   m_GameObject: {fileID: 1981041150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -3, z: 0}
-  m_LocalScale: {x: 40, y: 1, z: 20}
+  m_LocalScale: {x: 29.5, y: 1, z: 29.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -2060,7 +2060,7 @@ MonoBehaviour:
   _placedLayer:
     serializedVersion: 2
     m_Bits: 64
-  _scrollSpeed: 10
+  _scrollSpeed: 10000
 --- !u!1 &2096381062
 GameObject:
   m_ObjectHideFlags: 0

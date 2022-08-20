@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 4630074009935815002}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.99, y: 0.99, z: 0.99}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -128,7 +128,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _canPlaceMat: {fileID: 2100000, guid: 55dcbcb97bd150549b4424685b940f64, type: 2}
   _cannotPlaceMat: {fileID: 2100000, guid: 146a681315e1093489139162e31772b7, type: 2}
-  _objectMask:
-    serializedVersion: 2
-    m_Bits: 64
   _canPlace: 1

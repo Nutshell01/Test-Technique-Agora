@@ -6,11 +6,16 @@ public class DetectCollision : MonoBehaviour
 {
     [SerializeField] Material _canPlaceMat;
     [SerializeField] Material _cannotPlaceMat;
-    [SerializeField] LayerMask _objectMask;
     public bool _canPlace = true;
 
 
-    
+    private void Start()
+    {
+        if(gameObject.tag == "Placed")
+        {
+            _canPlaceMat = GetComponent<Renderer>().material;
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -32,6 +37,11 @@ public class DetectCollision : MonoBehaviour
             _canPlace = true;
 
         }
+    }
+
+    public void ChangeDefaultMaterialOnClick()
+    {
+        _canPlaceMat = GetComponent<Renderer>().material;
     }
 
     

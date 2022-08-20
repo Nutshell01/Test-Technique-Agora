@@ -21,6 +21,8 @@ public class PlacementManager : MonoBehaviour
 
     bool _placeMode;
     bool _taken;
+    bool _snap;
+
     GameObject _takenObject;
     Vector3 _objectOrigin;
     // Start is called before the first frame update
@@ -45,13 +47,20 @@ public class PlacementManager : MonoBehaviour
         if(!_taken)
         {
             TogglePlaceMode();
+            
         }
-        
-        
+        ToggleRotationSnap();
+        Debug.Log(_snap);
      
     }
 
-
+    void ToggleRotationSnap()
+    {
+        if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            _snap = !_snap;
+        }
+    }
     void DestroyOldWaypoint(int meshIndex)
     {
         Destroy(_currentLocationMesh);
@@ -69,6 +78,7 @@ public class PlacementManager : MonoBehaviour
             if(Input.GetButtonDown("Fire2"))
             {
                 hit.collider.gameObject.GetComponent<MaterialChanger>().ChangeMaterial();
+                
             }
             if(Input.GetButtonDown("Fire1"))
             {
@@ -76,6 +86,7 @@ public class PlacementManager : MonoBehaviour
                 _takenObject = hit.collider.gameObject;
                 _objectOrigin = _takenObject.transform.position;
                 _taken = true;
+                hit.collider.gameObject.GetComponent<DetectCollision>().ChangeDefaultMaterialOnClick();
             }
             
         }
@@ -143,8 +154,31 @@ public class PlacementManager : MonoBehaviour
         {
             _objectLocation.SetActive(true);
             _yOffset = _objectToPlace.GetComponent<ObjectInfo>()._offsetNeeded;
-            _objectLocation.transform.position = hit.point += new Vector3(0, _yOffset, 0);
-            _objectLocation.transform.Rotate(0, Input.mouseScrollDelta.y * _scrollSpeed, 0);
+           
+
+            if(!_snap)
+            {
+                _objectLocation.transform.Rotate(0, Input.mouseScrollDelta.y * _scrollSpeed , 0); 
+                _objectLocation.transform.position = hit.point += new Vector3(0, _yOffset, 0);
+            }
+            else
+            {
+                int YRotation = 0;
+
+                if(Input.mouseScrollDelta.y > 0)
+                {
+                    YRotation = YRotation + 45;
+                    _objectLocation.transform.Rotate(0, YRotation, 0);
+                }
+                else if(Input.mouseScrollDelta.y < 0)
+                {
+                    YRotation = YRotation - 45;
+                    _objectLocation.transform.Rotate(0, YRotation, 0);
+                }
+                _objectLocation.transform.position =Vector3Int.RoundToInt(hit.point += new Vector3(0, _yOffset, 0));
+
+            }
+            
 
 
             if (Input.GetButtonDown("Fire1") && collisionDetection._canPlace)
