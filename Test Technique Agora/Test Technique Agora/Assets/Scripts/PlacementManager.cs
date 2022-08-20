@@ -9,6 +9,8 @@ public class PlacementManager : MonoBehaviour
     [SerializeField] GameObject _objectToPlace;
     [SerializeField] GameObject[] _objectsToPlace;
     [SerializeField] GameObject[] _locationMesh;
+    [SerializeField] UIShapes[] _shapeImages;
+    [SerializeField] Canvas _shapeCanvas;
 
     [SerializeField] LayerMask _groundLayer;
     [SerializeField] LayerMask _placedLayer;
@@ -61,9 +63,6 @@ public class PlacementManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         
-        
-        
-
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, _placedLayer))
         {
             if(Input.GetButtonDown("Fire2"))
@@ -78,9 +77,6 @@ public class PlacementManager : MonoBehaviour
                 _taken = true;
             }
             
-           
-
-
         }
         if (_taken)
         {
@@ -124,6 +120,12 @@ public class PlacementManager : MonoBehaviour
                 _currentLocationMesh = meshToShow;
                 _objectToPlace = _objectsToPlace[0];
                 _objectLocation.transform.rotation = Quaternion.identity;
+                _shapeCanvas.enabled = true;
+            }
+            else
+            {
+                ChangeSpriteShapes(0);
+                _shapeCanvas.enabled = false;
             }
            
         }
@@ -161,23 +163,37 @@ public class PlacementManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             _objectToPlace = _objectsToPlace[0];
+            ChangeSpriteShapes(0);
             DestroyOldWaypoint(0);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             _objectToPlace = _objectsToPlace[1];
+            ChangeSpriteShapes(1);
             DestroyOldWaypoint(1);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             _objectToPlace = _objectsToPlace[2];
+            ChangeSpriteShapes(2);
             DestroyOldWaypoint(2);
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             _objectToPlace = _objectsToPlace[3];
+            ChangeSpriteShapes(3);
             DestroyOldWaypoint(3);
         }
+    }
+
+    void ChangeSpriteShapes(int spriteNumber)
+    {
+        for (int i = 0; i < _shapeImages.Length ; i++)
+        {
+            _shapeImages[i].UnlightSprite();
+        }
+        _shapeImages[spriteNumber].LightSprite();
+
     }
 
 
