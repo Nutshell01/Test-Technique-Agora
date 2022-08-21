@@ -46,7 +46,6 @@ public class MaterialChanger : MonoBehaviour //Permet de changer le material de 
         {
             _currentMaterialIndex = 0;
         }
-
     }
 
 }

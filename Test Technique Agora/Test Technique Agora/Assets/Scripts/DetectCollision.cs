@@ -30,10 +30,8 @@ public class DetectCollision : MonoBehaviour //permet la détection d'objet dans 
     {
         if(other.gameObject.tag == "Placed")
         {
-            
             GetComponent<Renderer>().material = _cannotPlaceMat;
-            _canPlace = false;
-            
+            _canPlace = false;   
         }
        
     }
@@ -41,10 +39,8 @@ public class DetectCollision : MonoBehaviour //permet la détection d'objet dans 
     {
         if (other.gameObject.tag == "Placed")
         {
-            
             GetComponent<Renderer>().material = _canPlaceMat;
             _canPlace = true;
-
         }
     }
 

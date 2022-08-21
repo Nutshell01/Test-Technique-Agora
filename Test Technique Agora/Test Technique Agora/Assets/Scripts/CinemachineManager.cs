@@ -61,8 +61,6 @@ public class CinemachineManager : MonoBehaviour //Gère les mouvements de caméra
         camToRotate.transform.Rotate(0, Input.GetAxis("Horizontal"), 0);
     }
 
-    
-
     public IEnumerator ScreenShake(CinemachineVirtualCamera camToShake, float shakeDuration, float shakeForce)
     {
         camToShake.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = shakeForce;
