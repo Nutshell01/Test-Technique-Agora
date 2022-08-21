@@ -5,24 +5,45 @@ using Cinemachine;
 
 public class PlacementManager : MonoBehaviour
 {
+    #region SerializeField
+
+    [Space]
+    [Header ("Placement")]
+    
     [SerializeField] GameObject _objectLocation;
     [SerializeField] GameObject _currentLocationMesh;
     [SerializeField] GameObject _objectToPlace;
     [SerializeField] GameObject[] _objectsToPlace;
     [SerializeField] GameObject[] _locationMesh;
+    [SerializeField] LayerMask _groundLayer;
+    [SerializeField] LayerMask _placedLayer;
+    [SerializeField] float _scrollSpeed;
+
+    [Space]
+    [Header("UI")]
+    
     [SerializeField] UIShapes[] _shapeImages;
     [SerializeField] UIShapes[] _placeModeImage;
     [SerializeField] UIShapes _snapImage;
     [SerializeField] Canvas _shapeCanvas;
+
+    [Space]
+    [Header("Camera")]
+
     [SerializeField] CinemachineManager _cinemachineManager;
     [SerializeField] CinemachineVirtualCamera[] _cameras;
 
-    [SerializeField] LayerMask _groundLayer;
-    [SerializeField] LayerMask _placedLayer;
+    [Space]
+    [Header("Sound")]
+
+    [SerializeField] AudioSource _placeSound;
+    
+
+    #endregion
+
+    #region Private
 
     float _yOffset;
-    [SerializeField] float _scrollSpeed;
-
     bool _placeMode;
     bool _taken;
     bool _snap;
@@ -31,13 +52,9 @@ public class PlacementManager : MonoBehaviour
     GameObject _hoverObject = null;
 
     Vector3 _objectOrigin;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
+    #endregion
+
     void Update()
     {
         if(_placeMode)
@@ -53,10 +70,9 @@ public class PlacementManager : MonoBehaviour
         if(!_taken)
         {
             TogglePlaceMode();
-            
         }
 
-        ToggleRotationSnap();
+        ToggleSnap();
 
         if(_snap)
         {
@@ -66,32 +82,37 @@ public class PlacementManager : MonoBehaviour
         {
             _snapImage.UnlightSprite();
         }
-        
-     
+
     }
 
-    void ToggleRotationSnap()
+    void ToggleSnap() //Active ou désactive le snapping
     {
         if(Input.GetKeyDown(KeyCode.Tab))
         {
             _snap = !_snap;
         }
     }
-    void DestroyOldWaypoint(int meshIndex)
+
+    void DestroyOldWaypoint(int meshIndex) //Change le mesh visible en fonction de l'objet sélectionné
     {
         Destroy(_currentLocationMesh);
         GameObject meshToShow = GameObject.Instantiate(_locationMesh[meshIndex], _objectLocation.transform);
         _currentLocationMesh = meshToShow;
-
     }
-    void DetectPlacedObject()
+
+    void DetectPlacedObject() //Détecte si un objet est placé à l'endroit où l'utilisateur pointe la souris
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, _placedLayer))
         {
-            
+            if (_hoverObject != hit.collider.gameObject && _hoverObject != null &&
+                _hoverObject.GetComponent<MaterialChanger>()._isGlowing == true)
+            {
+                _hoverObject.GetComponent<MaterialChanger>()._isGlowing = false;
+            }
+
             _hoverObject = hit.collider.gameObject;
 
             if (!_taken)
@@ -100,16 +121,15 @@ public class PlacementManager : MonoBehaviour
             if (Input.GetButtonDown("Fire2"))
             {
                 hit.collider.gameObject.GetComponent<MaterialChanger>().ChangeMaterial();
-                
             }
             if(Input.GetButtonDown("Fire1"))
             {
-                
                 _takenObject = hit.collider.gameObject;
                 _objectOrigin = _takenObject.transform.position;
                 _taken = true;
                 hit.collider.gameObject.GetComponent<DetectCollision>().ChangeDefaultMaterialOnClick();
             }
+           
             
         }
         else if(_hoverObject != null)
@@ -122,11 +142,33 @@ public class PlacementManager : MonoBehaviour
         {
             
             _takenObject.GetComponent<MaterialChanger>().enabled = false;
+
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, _groundLayer))
             {
                 _yOffset = _takenObject.GetComponent<ObjectInfo>()._offsetNeeded;
-                _takenObject.transform.position = hit.point += new Vector3(0, _yOffset, 0);
-                _takenObject.transform.Rotate(0, Input.mouseScrollDelta.y * _scrollSpeed, 0);
+
+                if (!_snap)
+                {
+                    _takenObject.transform.Rotate(0, Input.mouseScrollDelta.y * _scrollSpeed, 0);
+                    _takenObject.transform.position = hit.point += new Vector3(0, _yOffset, 0);
+                }
+                else
+                {
+                    int YRotation = 0;
+
+                    if (Input.mouseScrollDelta.y > 0)
+                    {
+                        YRotation = YRotation + 45;
+                        _takenObject.transform.Rotate(0, YRotation, 0);
+                    }
+                    else if (Input.mouseScrollDelta.y < 0)
+                    {
+                        YRotation = YRotation - 45;
+                        _takenObject.transform.Rotate(0, YRotation, 0);
+                    }
+
+                    _takenObject.transform.position = Vector3Int.RoundToInt(hit.point += new Vector3(0, _yOffset, 0));
+                }
 
                 if (Input.GetKeyDown(KeyCode.Delete))
                 {
@@ -148,7 +190,7 @@ public class PlacementManager : MonoBehaviour
        
     }
 
-    void TogglePlaceMode()
+    void TogglePlaceMode() // Permet d'alterner entre le mode sélection et le mode placement
     {
         if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
         {
@@ -172,7 +214,8 @@ public class PlacementManager : MonoBehaviour
            
         }
     }
-    void PlaceObject()
+
+    void PlaceObject() // Permet de detecter où l'utilisateur pointe et de placer les objets
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -203,6 +246,7 @@ public class PlacementManager : MonoBehaviour
                     YRotation = YRotation - 45;
                     _objectLocation.transform.Rotate(0, YRotation, 0);
                 }
+
                 _objectLocation.transform.position =Vector3Int.RoundToInt(hit.point += new Vector3(0, _yOffset, 0));
             }
             
@@ -212,6 +256,7 @@ public class PlacementManager : MonoBehaviour
             {
                 GameObject.Instantiate(_objectToPlace, _objectLocation.transform.position, 
                     _objectLocation.transform.rotation);
+                _placeSound.Play();
 
                 for  (int i = 0; i < _cameras.Length; i++)
                 {
@@ -226,7 +271,7 @@ public class PlacementManager : MonoBehaviour
       
     }
 
-    void ChangeObjectType()
+    void ChangeObjectType() // Permet de choisir le type d'objet à placer
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -258,7 +303,7 @@ public class PlacementManager : MonoBehaviour
         }
     }
 
-    void ChangeSpriteShapes(int spriteNumber, UIShapes[] spriteArrayToChange)
+    void ChangeSpriteShapes(int spriteNumber, UIShapes[] spriteArrayToChange) // Gère l'ui
     {
         for (int i = 0; i < spriteArrayToChange.Length ; i++)
         {
@@ -267,8 +312,4 @@ public class PlacementManager : MonoBehaviour
         spriteArrayToChange[spriteNumber].LightSprite();
 
     }
-
-
-    
-
 }

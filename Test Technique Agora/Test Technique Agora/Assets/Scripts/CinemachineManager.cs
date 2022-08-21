@@ -3,18 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
-public class CinemachineManager : MonoBehaviour
+public class CinemachineManager : MonoBehaviour //Gère les mouvements de caméra
 {
-    bool _topView;
+    #region SerializeField
+
     [SerializeField] GameObject _frontCam;
     [SerializeField] GameObject _topCam;
+
+    [Space]
 
     [SerializeField] GameObject _frontHolder;
     [SerializeField] GameObject _topHolder;
 
+    [Space]
+
     [SerializeField] UIShapes _povButton;
- 
-    // Update is called once per frame
+
+    #endregion
+
+    #region Private
+
+    bool _topView;
+
+    #endregion
+    
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.LeftShift))

@@ -2,12 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DetectCollision : MonoBehaviour
+public class DetectCollision : MonoBehaviour //permet la détection d'objet dans lors du placement, ainsi que
+                                             //le changement de material.
 {
+    #region SerializeField
+
     [SerializeField] Material _canPlaceMat;
     [SerializeField] Material _cannotPlaceMat;
+
+    #endregion
+
+    #region Public
+
     public bool _canPlace = true;
 
+    #endregion
 
     private void Start()
     {
