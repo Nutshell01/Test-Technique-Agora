@@ -5,16 +5,28 @@ using UnityEngine;
 public class MaterialChanger : MonoBehaviour
 {
     [SerializeField] Material[] _placedMaterials;
+    [SerializeField] Material[] _glowMaterials;
     Renderer _objectRenderer;
     int _currentMaterialIndex;
+    public bool _isGlowing;
     void Start()
     {
         _objectRenderer = GetComponent<Renderer>();
         _objectRenderer.material = _placedMaterials[0];
     }
+    private void Update()
+    {
+        if (_isGlowing)
+            GlowMaterial();
+        else
+            UnglowMaterial();
+    }
 
-    // Update is called once per frame
-    void Update()
+    public void GlowMaterial()
+    {
+        _objectRenderer.material = _glowMaterials[_currentMaterialIndex];
+    }
+    public void UnglowMaterial()
     {
         _objectRenderer.material = _placedMaterials[_currentMaterialIndex];
     }

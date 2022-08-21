@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class PlacementManager : MonoBehaviour
 {
@@ -11,7 +12,10 @@ public class PlacementManager : MonoBehaviour
     [SerializeField] GameObject[] _locationMesh;
     [SerializeField] UIShapes[] _shapeImages;
     [SerializeField] UIShapes[] _placeModeImage;
+    [SerializeField] UIShapes _snapImage;
     [SerializeField] Canvas _shapeCanvas;
+    [SerializeField] CinemachineManager _cinemachineManager;
+    [SerializeField] CinemachineVirtualCamera[] _cameras;
 
     [SerializeField] LayerMask _groundLayer;
     [SerializeField] LayerMask _placedLayer;
@@ -24,6 +28,8 @@ public class PlacementManager : MonoBehaviour
     bool _snap;
 
     GameObject _takenObject;
+    GameObject _hoverObject = null;
+
     Vector3 _objectOrigin;
     // Start is called before the first frame update
     void Start()
@@ -49,8 +55,18 @@ public class PlacementManager : MonoBehaviour
             TogglePlaceMode();
             
         }
+
         ToggleRotationSnap();
-        Debug.Log(_snap);
+
+        if(_snap)
+        {
+            _snapImage.LightSprite();
+        }
+        else
+        {
+            _snapImage.UnlightSprite();
+        }
+        
      
     }
 
@@ -75,7 +91,13 @@ public class PlacementManager : MonoBehaviour
         
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, _placedLayer))
         {
-            if(Input.GetButtonDown("Fire2"))
+            
+            _hoverObject = hit.collider.gameObject;
+
+            if (!_taken)
+                _hoverObject.GetComponent<MaterialChanger>()._isGlowing = true;
+
+            if (Input.GetButtonDown("Fire2"))
             {
                 hit.collider.gameObject.GetComponent<MaterialChanger>().ChangeMaterial();
                 
@@ -90,6 +112,12 @@ public class PlacementManager : MonoBehaviour
             }
             
         }
+        else if(_hoverObject != null)
+        {
+            _hoverObject.GetComponent<MaterialChanger>()._isGlowing = false;
+        }
+     
+
         if (_taken)
         {
             
@@ -176,7 +204,6 @@ public class PlacementManager : MonoBehaviour
                     _objectLocation.transform.Rotate(0, YRotation, 0);
                 }
                 _objectLocation.transform.position =Vector3Int.RoundToInt(hit.point += new Vector3(0, _yOffset, 0));
-
             }
             
 
@@ -185,7 +212,11 @@ public class PlacementManager : MonoBehaviour
             {
                 GameObject.Instantiate(_objectToPlace, _objectLocation.transform.position, 
                     _objectLocation.transform.rotation);
-                Debug.Log("object Instance");
+
+                for  (int i = 0; i < _cameras.Length; i++)
+                {
+                    StartCoroutine(_cinemachineManager.ScreenShake(_cameras[i], 0.05f, 2));
+                }
             }
         }
         else
@@ -202,24 +233,28 @@ public class PlacementManager : MonoBehaviour
             _objectToPlace = _objectsToPlace[0];
             ChangeSpriteShapes(0, _shapeImages);
             DestroyOldWaypoint(0);
+            _objectLocation.transform.rotation = Quaternion.identity;
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             _objectToPlace = _objectsToPlace[1];
             ChangeSpriteShapes(1, _shapeImages);
             DestroyOldWaypoint(1);
+            _objectLocation.transform.rotation = Quaternion.identity;
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             _objectToPlace = _objectsToPlace[2];
             ChangeSpriteShapes(2, _shapeImages);
             DestroyOldWaypoint(2);
+            _objectLocation.transform.rotation = Quaternion.identity;
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             _objectToPlace = _objectsToPlace[3];
             ChangeSpriteShapes(3, _shapeImages);
             DestroyOldWaypoint(3);
+            _objectLocation.transform.rotation = Quaternion.identity;
         }
     }
 

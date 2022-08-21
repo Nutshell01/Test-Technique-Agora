@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class CinemachineManager : MonoBehaviour
 {
@@ -46,6 +47,15 @@ public class CinemachineManager : MonoBehaviour
     void RotateCam(GameObject camToRotate)
     {
         camToRotate.transform.Rotate(0, Input.GetAxis("Horizontal"), 0);
+    }
+
+    
+
+    public IEnumerator ScreenShake(CinemachineVirtualCamera camToShake, float shakeDuration, float shakeForce)
+    {
+        camToShake.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = shakeForce;
+        yield return new WaitForSeconds(shakeDuration);
+        camToShake.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0;
     }
     
     IEnumerator ResetCamera(GameObject camToReset)
