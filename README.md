@@ -21,6 +21,6 @@ Contrôles :
 - Q et D : Tourner la caméra sur l'axe Y
 - 1, 2, 3 et 4 : (en mode création) choisir une forme à placer 
 - Suppr : Supprime l'objet sélectionné
-- clic gauche : Placer/Reprendre un objet
+- Clic gauche : Placer/Reprendre un objet
 - Clic droit : Changer le material d'un objet
 
